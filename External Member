@@ -1,0 +1,52 @@
+public class External_Member extends Person{
+String name;
+String email;
+String id_num;
+String job;
+String organi;
+	public External_Member(String name, String email, String id_num, String job, String organi) {
+		super(name, email, id_num);
+		this.job = job;
+		this.organi = organi;
+		this.name = name;
+		this.email = email;
+		this.id_num = id_num;
+		
+	}
+	@Override
+	public String toString() {
+		return "External_Member [name = " + name + ", email = " + email + ", id_num = " + id_num + ", job = " + job
+				+ ", organi = " + organi + "]";
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getId_num() {
+		return id_num;
+	}
+	public void setId_num(String id_num) {
+		this.id_num = id_num;
+	}
+	public String getJob() {
+		return job;
+	}
+	public void setJob(String job) {
+		this.job = job;
+	}
+	public String getOrgani() {
+		return organi;
+	}
+	public void setOrgani(String organi) {
+		this.organi = organi;
+	}
+
+}

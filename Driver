@@ -1,0 +1,269 @@
+import java.util.*;
+import java.io.*;
+import java.time.LocalDate;
+import java.time.temporal.*;
+import java.time.format.DateTimeParseException;
+public class Driver {
+	
+	static boolean exemExists(ArrayList<External_Member> exem, String id) {
+		for(External_Member ex : exem) {
+			if(ex.id_num.equalsIgnoreCase(id))
+				return true;
+		}
+		return false;
+	}
+	
+	static boolean studExists(ArrayList<Student> stud, String id) {
+		for(Student s : stud) {
+			if(s.id_num.equalsIgnoreCase(id))
+				return true;
+		}
+		return false;
+	}
+	
+	static boolean movExists(ArrayList<Movie> mov, String id) {
+		for(Movie m : mov) {
+			if(m.movie_id.equalsIgnoreCase(id))
+				return true;
+		}
+		return false;
+	}
+	
+	
+	public static void main(String[] args) {
+		
+		Payment pay = new Rental();
+		
+		ArrayList<Student> load_stud = new ArrayList<>();
+		ArrayList<External_Member> load_exem = new ArrayList<>();
+		ArrayList<Movie> load_mov = new ArrayList<>();
+		
+		ArrayList<External_Member> exem = new ArrayList<>();
+		exem.add(new External_Member("Thomas", "th@example.com", "E1", "Doctor", "JD Hospital" ));
+		exem.add(new External_Member("Neo", "n@example.com", "E2", "Mechanic", "JD Shop" ));
+		exem.add(new External_Member("Joeffrey", "j@example.com", "E3", "Engineer", "JD Company" ));
+		
+		ArrayList<Student> stud = new ArrayList<>();
+		stud.add(new Student("Charles", "ch@example.com", "S1", "A", "LP School" ));
+		stud.add(new Student("Shaira", "sh@example.com", "S2", "B", "GG School" ));
+		stud.add(new Student("Fritz", "f@example.com", "S3", "G", "KP School" ));
+		
+		
+		ArrayList<Movie> mov = new ArrayList<>();
+		mov.add(new Movie("Rise of the Guardians", "M1"));
+		mov.add(new Movie("Iron Man", "M2"));
+		mov.add(new Movie("10 Things I Hate About You", "M3"));
+		
+		Scanner sc = new Scanner(System.in);
+		boolean f = true;
+		while(f) {
+		System.out.println("Menu: ");
+		System.out.println("1 add student, 2  add external member, 3 add movie, 4 Show all students and info, "
+				+ "5 Show external member and info, "
+				+ "6 Show all movie and info, "
+				+ "7 Save listed students, external member and movie, 8 Exit menu");
+		int ans = sc.nextInt();		
+		switch(ans) {
+		case 1:
+			
+			
+			while(true) {
+				
+				System.out.println("Enter student's ID number... ");
+				String id_num = sc.next();
+				
+				if(studExists(stud, id_num)) {
+					System.out.println("Duplicate value. Enter another id number. ");
+				}else {
+					System.out.println("Enter student's name... ");
+					String name = sc.next();
+					System.out.println("Enter student's email... ");
+					String email = sc.next();
+					System.out.println("Enter student's grade... ");
+					String grade = sc.next();
+					System.out.println("Enter student's school name... ");
+					String sl_name= sc.next();
+					stud.add(new Student(name, email, id_num, grade, sl_name));
+					System.out.println("Student added. ");
+					break;
+				}
+			}
+			try {
+				FileWriter fw1 = new FileWriter("C:\\PROG2 PROJECT\\Student.txt");
+				for(Student s : stud) {
+					fw1.write(s.toString() + "\n");
+				}
+				fw1.close();
+				System.out.println("Saved successfully. ");
+			}catch (Exception e) {
+				System.out.println("Error writing file. ");
+			}
+			
+			
+
+			break;
+		case 2:
+			while(true) {
+				System.out.println("Enter external member's ID number... ");
+				String idn1= sc.next();
+				
+				if(exemExists(exem, idn1)) {
+					System.out.println("Duplicate value. Enter another id number. ");
+				}else {
+					System.out.println("Enter external member's name... ");
+					String n1= sc.next();
+					System.out.println("Enter external member's email... ");
+					String em1 = sc.next();
+					System.out.println("Enter external member's job... ");
+					String job = sc.next();
+					System.out.println("Enter external member's organization... ");
+					String organi = sc.next();
+					exem.add(new External_Member(n1, em1, idn1, job, organi));
+					System.out.println("External member added. ");
+				}
+				break;
+			}
+			try {
+				FileWriter fw = new FileWriter("C:\\PROG2 PROJECT\\External_Member.txt");
+				for(External_Member ex : exem) {
+					fw.write(ex.toString() + "\n");
+				}
+				fw.close();
+				System.out.println("Saved successfully. ");
+			}catch (Exception e) {
+				System.out.println("Error writing file. ");
+			}
+			
+			
+			break;
+		case 3:
+			while(true) {
+				System.out.println("Enter movie's ID... ");
+				String m_id = sc.next();
+				
+				if(movExists(mov, m_id)) {
+					System.out.println("Duplicate value. Enter another id number. ");
+				}else {
+					System.out.println("Enter movie's name... ");
+					String m_name = sc.next();
+					mov.add(new Movie(m_name, m_id));
+					System.out.println("Movie added. ");
+				}
+				break;
+			}
+			try {
+				FileWriter fw2 = new FileWriter("C:\\PROG2 PROJECT\\Movie.txt");
+				for(Movie m : mov) {
+					fw2.write(m.toString() + "\n");
+				}
+				fw2.close();
+				System.out.println("Saved successfully. ");
+			}catch (Exception e) {
+				System.out.println("Error writing file. ");
+			}
+			
+			break;
+		case 4:
+		
+			try {
+				Scanner l2 = new Scanner (new File("C:\\PROG2 PROJECT\\Student.txt"));
+				while(l2.hasNextLine()) {
+					String line1 = l2.nextLine();
+					String [] parts1 = line1.split(",");
+					load_stud.add(new Student(parts1[0], parts1[1], parts1[2], parts1[3], parts1[4]));
+				}
+				l2.close();
+			}catch(Exception e) {
+				System.out.println("Error reading file. ");
+			}
+			for(Student s : load_stud) {
+				System.out.println(s.getName() + " - " + s.getEmail() + " - " + s.getId_num() + ", " + s.getGrade() + ", " + s.getSl_name() );
+			}
+			
+			break;
+		case 5:
+			try {
+				Scanner l1 = new Scanner (new File("C:\\PROG2 PROJECT\\External_Member.txt"));
+				while(l1.hasNextLine()) {
+					String line = l1.nextLine();
+					String [] parts = line.split(",");
+					load_exem.add(new External_Member(parts[0], parts[1], parts[2], parts[3], parts[4]));
+					
+				}
+				l1.close();
+			}catch(Exception e) {
+				System.out.println("Error reading file. ");
+			}
+			for(External_Member ex : load_exem) {
+				System.out.println(ex.getName() + " - " + ex.getEmail() + " - " + ex.getId_num() + ", " + ex.getJob() + ", " + ex.getOrgani() );
+			}
+			
+			
+			break;
+		case 6:
+
+			try {
+				Scanner l3 = new Scanner (new File("C:\\PROG2 PROJECT\\Movie.txt"));
+				while(l3.hasNextLine()) {
+					String line2 = l3.nextLine();
+					String [] parts2 = line2.split(",");
+					load_mov.add(new Movie(parts2[0], parts2[1]));
+				}
+				l3.close();
+			}catch(Exception e) {
+				System.out.println("Error reading file. ");
+			}
+			for(Movie m : load_mov) {
+				System.out.println(m.getMovie_name() + " - " + m.getMovie_id());
+			}
+			
+			break;
+		case 7:
+			try {
+			String d1_s, d2_s;
+			
+			System.out.println("Do you wish to rent a movie? ");
+			String ch = sc.next();
+			if(ch.equalsIgnoreCase("Yes")) {
+				System.out.println("For how long do you wish to rent? ");
+				System.out.println("Enter the rent day (YYYY-MM-DD format):... ");
+				d1_s = sc.next();
+				System.out.println("Enter the return day (YYYY-MM-DD format):... ");
+				d2_s = sc.next();
+				LocalDate d1l = LocalDate.parse(d1_s);
+				LocalDate d2l = LocalDate.parse(d2_s);
+				System.out.println("Successfully entered dates: " + d1l + " - " + d2l);
+				if(pay instanceof Rental) {
+					Rental r = (Rental) pay;
+					r.nights_rented(d1l, d2l);
+					
+				}
+				
+				
+			}
+			
+		}catch (DateTimeParseException e) {
+	            
+	            System.err.println("Error: Invalid date format. Please use YYYY-MM-DD.");
+	           
+	        } finally {
+	            sc.close();
+	        }
+			
+			break;
+		case 8:
+			System.out.println("");
+		
+		case 9:
+			System.out.println("EXITED");
+			f = false;
+			break;
+			
+		}
+		}
+		
+	
+
+	}
+
+}

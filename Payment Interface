@@ -1,0 +1,15 @@
+public interface Payment {
+static final double fee_students = 5;
+static final double fee_Ex_member= 10;
+
+static String calStud(int dr) {
+	return null;
+}
+     
+
+static String calExem(int dr1) {
+	return null;
+}
+
+
+}

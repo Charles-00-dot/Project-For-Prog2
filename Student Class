@@ -1,8 +1,4 @@
 public class Student extends Person{
-
-String name;
-String email;
-String id_num;
 String grade;
 String sl_name;
 

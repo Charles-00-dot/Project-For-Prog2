@@ -8,12 +8,8 @@ int nights_rent;
 LocalDate d1;
 LocalDate d2;
 
-public void isAvailable(int mov_id) {
 
-	
-}
-
-public void updateMovieAvailability(int mov_id) {
+public void updateMovieAvailability(String mov_id) {
 	
 }
 
@@ -28,8 +24,7 @@ public boolean isreturned(String mov_id) {
 public long nights_rented(LocalDate d1, LocalDate d2) {
 	long diff_days =ChronoUnit.DAYS.between(d1, d2);
 	int diff_int = (int) diff_days;
-	Rental.calStud(diff_int);
-	Rental.calExem(diff_int);
+	System.out.println("Number of days rented: " + diff_int);
 	return diff_int;
 	
 	
@@ -40,19 +35,19 @@ double stu_pay = 0;
 if(dr > 7) {
 	 stu_pay = (fee_students+((dr-7)*1));
 	 return ("The student's fee: $" + stu_pay );
-}else if(dr<=7 && dr>0) {
+}else if(dr<=7 || dr>0) {
 	 
 	System.out.println("The external member's fee: $" + fee_students);
 }
-return null;
+return ("The external member's fee: $" + fee_students);
 }
 
 static String calExem(int dr1) {
 	double exem_pay = 0;
 	if (dr1 >7) {
-		exem_pay =(fee_Ex_member+((dr1-7)*2));
+		exem_pay =(fee_Ex_member + ((dr1-7)*2) );
 		return ("The external member's fee: $" + exem_pay );
-	}else if(dr1<=7 && dr1>0) {
+	}else if(dr1<=7 || dr1>0) {
 		System.out.println("The external member's fee: $" + fee_Ex_member);
 	}
 	return null;

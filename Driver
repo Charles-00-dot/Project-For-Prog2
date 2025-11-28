@@ -1,10 +1,14 @@
 import java.util.*;
 import java.io.*;
+import com.google.gson.*;
+import com.google.gson.GsonBuilder;
 import java.time.LocalDate;
 import java.time.temporal.*;
 import java.time.format.DateTimeParseException;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 public class Driver {
-	
+	Scanner sc = new Scanner(System.in);
 	static boolean exemExists(ArrayList<External_Member> exem, String id) {
 		for(External_Member ex : exem) {
 			if(ex.id_num.equalsIgnoreCase(id))
@@ -28,15 +32,27 @@ public class Driver {
 		}
 		return false;
 	}
+	static boolean isAvailable(ArrayList<Rented> rt, String id) {
+		
+		for(Rented r : rt) {
+			if(r.movie_id.equalsIgnoreCase(id))
+				
+				return true;
+		}
+		return false;
+	}
 	
 	
 	public static void main(String[] args) {
 		
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String fps = "C:\\PROG2 PROJECT\\Student.json";
+		String fpe = "C:\\PROG2 PROJECT\\External_Member.json";
+		String fpm = "C:\\PROG2 PROJECT\\Movie.json";
+		String fpr = "C:\\PROG2 PROJECT\\Rented.json";
 		Payment pay = new Rental();
 		
-		ArrayList<Student> load_stud = new ArrayList<>();
-		ArrayList<External_Member> load_exem = new ArrayList<>();
-		ArrayList<Movie> load_mov = new ArrayList<>();
+		ArrayList<Rented> rt = new ArrayList<>();
 		
 		ArrayList<External_Member> exem = new ArrayList<>();
 		exem.add(new External_Member("Thomas", "th@example.com", "E1", "Doctor", "JD Hospital" ));
@@ -58,16 +74,17 @@ public class Driver {
 		boolean f = true;
 		while(f) {
 		System.out.println("Menu: ");
-		System.out.println("1 add student, 2  add external member, 3 add movie, 4 Show all students and info, "
-				+ "5 Show external member and info, "
-				+ "6 Show all movie and info, "
-				+ "7 Save listed students, external member and movie, 8 Exit menu");
+		System.out.println("1 add student, 2  add external member, 3 add movie " ); 
+		System.out.println("4 Show all students and info, 5 Show external member and info, 6 Show all movie and info " );
+		System.out.println("7 Rent a movie, 8 Return a movie, 9 Exit ");
+		
 		int ans = sc.nextInt();		
 		switch(ans) {
 		case 1:
 			
 			
 			while(true) {
+				
 				
 				System.out.println("Enter student's ID number... ");
 				String id_num = sc.next();
@@ -88,19 +105,15 @@ public class Driver {
 					break;
 				}
 			}
-			try {
-				FileWriter fw1 = new FileWriter("C:\\PROG2 PROJECT\\Student.txt");
-				for(Student s : stud) {
-					fw1.write(s.toString() + "\n");
-				}
-				fw1.close();
+			
+				try(FileWriter fw1 = new FileWriter(fps)){
+				gson.toJson(stud, fw1);
 				System.out.println("Saved successfully. ");
-			}catch (Exception e) {
-				System.out.println("Error writing file. ");
-			}
-			
-			
-
+				}
+				catch (IOException e) {
+					System.out.println("Error writing file: " + e.getMessage());
+				}
+				
 			break;
 		case 2:
 			while(true) {
@@ -120,20 +133,17 @@ public class Driver {
 					String organi = sc.next();
 					exem.add(new External_Member(n1, em1, idn1, job, organi));
 					System.out.println("External member added. ");
+					break;
 				}
-				break;
+				
 			}
-			try {
-				FileWriter fw = new FileWriter("C:\\PROG2 PROJECT\\External_Member.txt");
-				for(External_Member ex : exem) {
-					fw.write(ex.toString() + "\n");
-				}
-				fw.close();
+			try(FileWriter fw2 = new FileWriter(fpe)){
+				gson.toJson(exem, fw2);
 				System.out.println("Saved successfully. ");
-			}catch (Exception e) {
-				System.out.println("Error writing file. ");
-			}
-			
+				}
+				catch (IOException e) {
+					System.out.println("Error writing file: " + e.getMessage());
+				}
 			
 			break;
 		case 3:
@@ -148,79 +158,85 @@ public class Driver {
 					String m_name = sc.next();
 					mov.add(new Movie(m_name, m_id));
 					System.out.println("Movie added. ");
+					break;
 				}
-				break;
+				
 			}
-			try {
-				FileWriter fw2 = new FileWriter("C:\\PROG2 PROJECT\\Movie.txt");
-				for(Movie m : mov) {
-					fw2.write(m.toString() + "\n");
-				}
-				fw2.close();
+			try(FileWriter fw3 = new FileWriter(fpm)){
+				gson.toJson(mov, fw3);
 				System.out.println("Saved successfully. ");
-			}catch (Exception e) {
-				System.out.println("Error writing file. ");
-			}
+				}
+				catch (IOException e) {
+					System.out.println("Error writing file: " + e.getMessage());
+				}
 			
 			break;
 		case 4:
-		
-			try {
-				Scanner l2 = new Scanner (new File("C:\\PROG2 PROJECT\\Student.txt"));
-				while(l2.hasNextLine()) {
-					String line1 = l2.nextLine();
-					String [] parts1 = line1.split(",");
-					load_stud.add(new Student(parts1[0], parts1[1], parts1[2], parts1[3], parts1[4]));
+			File f1 = new File(fps);
+			if(f1.exists() && f1.length() !=0) {
+				try(FileReader fr = new FileReader(f1)){
+					Type lts = new TypeToken<ArrayList<Student>>(){}.getType();
+					stud = gson.fromJson(fr, lts);
+				}catch (IOException e) {
+					System.out.println("Error reading file: " + e.getMessage());
 				}
-				l2.close();
-			}catch(Exception e) {
-				System.out.println("Error reading file. ");
 			}
-			for(Student s : load_stud) {
+			System.out.println("All Students: ");
+			for(Student s : stud) {
 				System.out.println(s.getName() + " - " + s.getEmail() + " - " + s.getId_num() + ", " + s.getGrade() + ", " + s.getSl_name() );
 			}
 			
 			break;
 		case 5:
-			try {
-				Scanner l1 = new Scanner (new File("C:\\PROG2 PROJECT\\External_Member.txt"));
-				while(l1.hasNextLine()) {
-					String line = l1.nextLine();
-					String [] parts = line.split(",");
-					load_exem.add(new External_Member(parts[0], parts[1], parts[2], parts[3], parts[4]));
-					
+			File f2 = new File(fpe);
+			if(f2.exists() && f2.length() !=0) {
+				try(FileReader fr2 = new FileReader(f2)){
+					Type ltexem = new TypeToken<ArrayList<External_Member>>(){}.getType();
+					exem = gson.fromJson(fr2, ltexem);
+				}catch (IOException e) {
+					System.out.println("Error reading file: " + e.getMessage());
 				}
-				l1.close();
-			}catch(Exception e) {
-				System.out.println("Error reading file. ");
 			}
-			for(External_Member ex : load_exem) {
+			System.out.println("All External member: ");
+			for(External_Member ex : exem) {
 				System.out.println(ex.getName() + " - " + ex.getEmail() + " - " + ex.getId_num() + ", " + ex.getJob() + ", " + ex.getOrgani() );
 			}
-			
-			
 			break;
 		case 6:
 
-			try {
-				Scanner l3 = new Scanner (new File("C:\\PROG2 PROJECT\\Movie.txt"));
-				while(l3.hasNextLine()) {
-					String line2 = l3.nextLine();
-					String [] parts2 = line2.split(",");
-					load_mov.add(new Movie(parts2[0], parts2[1]));
+			File f3 = new File(fpm);
+			if(f3.exists() && f3.length() !=0) {
+				try(FileReader fr3 = new FileReader(f3)){
+					Type ltm = new TypeToken<ArrayList<Movie>>(){}.getType();
+					mov = gson.fromJson(fr3, ltm);
+				}catch (IOException e) {
+					System.out.println("Error reading file: " + e.getMessage());
 				}
-				l3.close();
-			}catch(Exception e) {
-				System.out.println("Error reading file. ");
 			}
-			for(Movie m : load_mov) {
-				System.out.println(m.getMovie_name() + " - " + m.getMovie_id());
+			System.out.println("All Movies: ");
+			for(Movie m : mov) {
+				System.out.println(m.getMovie_name() + " - " + m.getMovie_id() );
 			}
 			
+		
+			File f4 = new File(fpr);
+			if(f4.exists() && f4.length() !=0) {
+				try(FileReader fr4 = new FileReader(f4)){
+					Type ltr = new TypeToken<ArrayList<Rented>>(){}.getType();
+					rt = gson.fromJson(fr4, ltr);
+				}catch (IOException e) {
+					System.out.println("Error reading file: " + e.getMessage());
+				}
+			}
+			System.out.println("All Rented Movies: ");
+			for(Rented r : rt) {
+				System.out.println("Member ID: " + r.getMember_id() + " - Movie ID: " + r.getMovie_id() );
+			}
 			break;
 		case 7:
+			
 			try {
-			String d1_s, d2_s;
+			String d1_s, d2_s, rent_ids = null, rent_idm = null;
 			
 			System.out.println("Do you wish to rent a movie? ");
 			String ch = sc.next();
@@ -236,23 +252,112 @@ public class Driver {
 				if(pay instanceof Rental) {
 					Rental r = (Rental) pay;
 					r.nights_rented(d1l, d2l);
-					
+					long diff_days =ChronoUnit.DAYS.between(d1l, d2l);
+					int diff_int = (int) diff_days;
+					System.out.println("Are you a student or external member? ");
+					String type = sc.next();
+					if(type.equalsIgnoreCase("Student")) {
+						System.out.println("Enter your ID number... ");
+						String ids = sc.next();
+						for (Student s : stud) {
+						    
+						    if (s.getId_num().equalsIgnoreCase(ids)) {
+						        rent_ids = s.getId_num(); 
+						        break; 
+						    }
+						}
+						System.out.println("Enter the movie ID you wish to rent... ");
+						String idm = sc.next();
+						for (Movie m : mov) {
+						    
+						    if (m.getMovie_id().equalsIgnoreCase(idm)) {
+						        rent_idm = m.getMovie_id(); 
+						        break; 
+						    }
+						}
+						if(rent_ids != null && rent_idm != null) {
+							if(!isAvailable(rt, rent_idm)) {
+								rt.add(new Rented(rent_ids, rent_idm));
+							    Rental.calStud(diff_int);
+							    System.out.println("Rent recorded successfully.");
+							}else {
+								if (rent_ids == null) {
+							        System.out.println("Error: Student ID not found. ");
+							    }
+							    if (rent_idm == null) {
+							        System.out.println("Error: Movie ID not found. ");
+							    }
+							}
+						}
+						try(FileWriter fwr1 = new FileWriter(fpr)){
+							gson.toJson(rt, fwr1);
+							System.out.println("Saved successfully. ");
+							}
+							catch (IOException e) {
+								System.out.println("Error writing file: " + e.getMessage());
+							}
+							
+						break;
+						
+					}else if(type.equalsIgnoreCase("External Member")) {
+						System.out.println("Enter your ID number... ");
+						String ide = sc.next();
+						for (External_Member ex : exem) {
+						    
+						    if (ex.getId_num().equalsIgnoreCase(ide)) {
+						        rent_ids = ex.getId_num(); 
+						        break; 
+						    }
+						}
+						System.out.println("Enter the movie ID you wish to rent... ");
+						String idm = sc.next();
+						for (Movie m : mov) {
+						    
+						    if (m.getMovie_id().equalsIgnoreCase(idm)) {
+						        rent_idm = m.getMovie_id(); 
+						        break; 
+						    }
+						}
+						if(rent_ids != null && rent_idm != null) {
+							if(!isAvailable(rt, rent_idm)) {
+								rt.add(new Rented(rent_ids, rent_idm));
+							    Rental.calExem(diff_int);
+							    System.out.println("Rent recorded successfully.");
+							}else {
+								if (rent_ids == null) {
+							        System.out.println("Error: External Member ID not found.");
+							    }
+							    if (rent_idm == null) {
+							        System.out.println("Error: Movie ID not found.");
+							    }
+							}
+							
+						}	
+						try(FileWriter fwr1 = new FileWriter(fpr)){
+							gson.toJson(rt, fwr1);
+							System.out.println("Saved successfully. ");
+							}
+							catch (IOException e) {
+								System.out.println("Error writing file: " + e.getMessage());
+							}
+							
+						break;
+					}else {
+							System.out.println("Invalid type. Please enter either 'Student' or 'External Member'. ");
 				}
-				
-				
 			}
+				
+				
+		}
 			
 		}catch (DateTimeParseException e) {
 	            
-	            System.err.println("Error: Invalid date format. Please use YYYY-MM-DD.");
-	           
-	        } finally {
-	            sc.close();
+	            System.err.println("Error: Invalid date format. Please use YYYY-MM-DD."); 
 	        }
 			
 			break;
 		case 8:
-			System.out.println("");
+			
 		
 		case 9:
 			System.out.println("EXITED");

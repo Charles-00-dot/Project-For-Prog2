@@ -1,7 +1,4 @@
 public class External_Member extends Person{
-String name;
-String email;
-String id_num;
 String job;
 String organi;
 	public External_Member(String name, String email, String id_num, String job, String organi) {

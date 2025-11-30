@@ -7,7 +7,7 @@ import java.time.temporal.*;
 import java.time.format.DateTimeParseException;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-public class Driver {
+public class Driver implements Payment {
 	Scanner sc = new Scanner(System.in);
 	static boolean exemExists(ArrayList<External_Member> exem, String id) {
 		for(External_Member ex : exem) {
@@ -38,6 +38,18 @@ public class Driver {
 			if(r.movie_id.equalsIgnoreCase(id))
 				
 				return true;
+		}
+		return false;
+	}
+	
+	static boolean returnMovie(ArrayList<Rented> rt, ArrayList<Movie> mov, String id) {
+		for(Rented r : rt) {
+			for(Movie m: mov) {
+				if(r.movie_id.equalsIgnoreCase(id) || m.movie_id.equalsIgnoreCase(id)) {
+					rt.remove(r);
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -81,7 +93,19 @@ public class Driver {
 		int ans = sc.nextInt();		
 		switch(ans) {
 		case 1:
-			
+			File f1 = new File(fps);
+			if(f1.exists() && f1.length() !=0) {
+				try(FileReader fr = new FileReader(f1)){
+					Type lts = new TypeToken<ArrayList<Student>>(){}.getType();
+					stud = gson.fromJson(fr, lts);
+				}catch (IOException e) {
+					System.out.println("Error reading file: " + e.getMessage());
+				}
+			}
+			System.out.println("All Students: ");
+			for(Student s : stud) {
+				System.out.println(s.getName() + " - " + s.getEmail() + " - " + s.getId_num() + ", " + s.getGrade() + ", " + s.getSl_name() );
+			}
 			
 			while(true) {
 				
@@ -116,6 +140,19 @@ public class Driver {
 				
 			break;
 		case 2:
+			File f2 = new File(fpe);
+			if(f2.exists() && f2.length() !=0) {
+				try(FileReader fr2 = new FileReader(f2)){
+					Type ltexem = new TypeToken<ArrayList<External_Member>>(){}.getType();
+					exem = gson.fromJson(fr2, ltexem);
+				}catch (IOException e) {
+					System.out.println("Error reading file: " + e.getMessage());
+				}
+			}
+			System.out.println("All External member: ");
+			for(External_Member ex : exem) {
+				System.out.println(ex.getName() + " - " + ex.getEmail() + " - " + ex.getId_num() + ", " + ex.getJob() + ", " + ex.getOrgani() );
+			}
 			while(true) {
 				System.out.println("Enter external member's ID number... ");
 				String idn1= sc.next();
@@ -147,6 +184,19 @@ public class Driver {
 			
 			break;
 		case 3:
+			File f3 = new File(fpm);
+			if(f3.exists() && f3.length() !=0) {
+				try(FileReader fr3 = new FileReader(f3)){
+					Type ltm = new TypeToken<ArrayList<Movie>>(){}.getType();
+					mov = gson.fromJson(fr3, ltm);
+				}catch (IOException e) {
+					System.out.println("Error reading file: " + e.getMessage());
+				}
+			}
+			System.out.println("All Movies: ");
+			for(Movie m : mov) {
+				System.out.println(m.getMovie_name() + " - " + m.getMovie_id() );
+			}
 			while(true) {
 				System.out.println("Enter movie's ID... ");
 				String m_id = sc.next();
@@ -172,11 +222,11 @@ public class Driver {
 			
 			break;
 		case 4:
-			File f1 = new File(fps);
-			if(f1.exists() && f1.length() !=0) {
-				try(FileReader fr = new FileReader(f1)){
+			File f4 = new File(fps);
+			if(f4.exists() && f4.length() !=0) {
+				try(FileReader fr4 = new FileReader(f4)){
 					Type lts = new TypeToken<ArrayList<Student>>(){}.getType();
-					stud = gson.fromJson(fr, lts);
+					stud = gson.fromJson(fr4, lts);
 				}catch (IOException e) {
 					System.out.println("Error reading file: " + e.getMessage());
 				}
@@ -188,11 +238,11 @@ public class Driver {
 			
 			break;
 		case 5:
-			File f2 = new File(fpe);
-			if(f2.exists() && f2.length() !=0) {
-				try(FileReader fr2 = new FileReader(f2)){
+			File f5 = new File(fpe);
+			if(f5.exists() && f5.length() !=0) {
+				try(FileReader fr5 = new FileReader(f5)){
 					Type ltexem = new TypeToken<ArrayList<External_Member>>(){}.getType();
-					exem = gson.fromJson(fr2, ltexem);
+					exem = gson.fromJson(fr5, ltexem);
 				}catch (IOException e) {
 					System.out.println("Error reading file: " + e.getMessage());
 				}
@@ -204,11 +254,11 @@ public class Driver {
 			break;
 		case 6:
 
-			File f3 = new File(fpm);
-			if(f3.exists() && f3.length() !=0) {
-				try(FileReader fr3 = new FileReader(f3)){
+			File f6 = new File(fpm);
+			if(f6.exists() && f6.length() !=0) {
+				try(FileReader fr6 = new FileReader(f6)){
 					Type ltm = new TypeToken<ArrayList<Movie>>(){}.getType();
-					mov = gson.fromJson(fr3, ltm);
+					mov = gson.fromJson(fr6, ltm);
 				}catch (IOException e) {
 					System.out.println("Error reading file: " + e.getMessage());
 				}
@@ -219,9 +269,9 @@ public class Driver {
 			}
 			
 		
-			File f4 = new File(fpr);
-			if(f4.exists() && f4.length() !=0) {
-				try(FileReader fr4 = new FileReader(f4)){
+			File f7 = new File(fpr);
+			if(f7.exists() && f7.length() !=0) {
+				try(FileReader fr4 = new FileReader(f7)){
 					Type ltr = new TypeToken<ArrayList<Rented>>(){}.getType();
 					rt = gson.fromJson(fr4, ltr);
 				}catch (IOException e) {
@@ -266,6 +316,7 @@ public class Driver {
 						        break; 
 						    }
 						}
+						try {
 						System.out.println("Enter the movie ID you wish to rent... ");
 						String idm = sc.next();
 						for (Movie m : mov) {
@@ -275,21 +326,32 @@ public class Driver {
 						        break; 
 						    }
 						}
+						}catch(Exception e) {
+							System.out.println("An error occurred while entering movie ID: " + e.getMessage());
+						}
 						if(rent_ids != null && rent_idm != null) {
 							if(!isAvailable(rt, rent_idm)) {
 								rt.add(new Rented(rent_ids, rent_idm));
-							    Rental.calStud(diff_int);
+							   
 							    System.out.println("Rent recorded successfully.");
-							}else {
-								if (rent_ids == null) {
-							        System.out.println("Error: Student ID not found. ");
-							    }
-							    if (rent_idm == null) {
-							        System.out.println("Error: Movie ID not found. ");
-							    }
 							}
-						}
+							if (rent_ids == null)
+								System.out.println("Error: Student ID not found. ");
+							if (rent_idm == null)
+								System.out.println("Error: Movie ID not found. ");
+							    
+							}
+						
+						
 						try(FileWriter fwr1 = new FileWriter(fpr)){
+							if(pay instanceof Rental) {
+								if(rent_ids != null && rent_idm != null) {
+									Rental.calStud(diff_int);
+								} else {
+									System.out.println( "The external member's fee: $" + fee_students);
+								}
+								
+							}
 							gson.toJson(rt, fwr1);
 							System.out.println("Saved successfully. ");
 							}
@@ -299,7 +361,8 @@ public class Driver {
 							
 						break;
 						
-					}else if(type.equalsIgnoreCase("External Member")) {
+					}
+					if(type.equalsIgnoreCase("External Member")) {
 						System.out.println("Enter your ID number... ");
 						String ide = sc.next();
 						for (External_Member ex : exem) {
@@ -321,20 +384,26 @@ public class Driver {
 						if(rent_ids != null && rent_idm != null) {
 							if(!isAvailable(rt, rent_idm)) {
 								rt.add(new Rented(rent_ids, rent_idm));
-							    Rental.calExem(diff_int);
+							
 							    System.out.println("Rent recorded successfully.");
-							}else {
-								if (rent_ids == null) {
-							        System.out.println("Error: External Member ID not found.");
-							    }
-							    if (rent_idm == null) {
-							        System.out.println("Error: Movie ID not found.");
-							    }
+							}
+								if (rent_ids == null)
+									System.out.println("Error: External Member ID not found.");
+							    if (rent_idm == null)
+									System.out.println("Error: Movie ID not found.");
 							}
 							
-						}	
-						try(FileWriter fwr1 = new FileWriter(fpr)){
-							gson.toJson(rt, fwr1);
+						
+						if(pay instanceof Rental) {
+							if(rent_ids != null && rent_idm != null) {
+								Rental.calExem(diff_int);
+							} else {
+								System.out.println( "The external member's fee: $" + fee_Ex_member);
+							}
+							
+						}
+						try(FileWriter fwr2 = new FileWriter(fpr)){
+							gson.toJson(rt, fwr2);
 							System.out.println("Saved successfully. ");
 							}
 							catch (IOException e) {
@@ -357,8 +426,37 @@ public class Driver {
 			
 			break;
 		case 8:
-			
+			File f8 = new File(fpr);
+			if(f8.exists() && f8.length() !=0) {
+				try(FileReader fr8 = new FileReader(f8)){
+					Type ltr = new TypeToken<ArrayList<Rented>>(){}.getType();
+					rt = gson.fromJson(fr8, ltr);
+				}catch (IOException e) {
+					System.out.println("Error reading file: " + e.getMessage());
+				}
+			}
+			System.out.println("All Rented Movies: ");
+			for(Rented r : rt) {
+				System.out.println("Member ID: " + r.getMember_id() + " - Movie ID: " + r.getMovie_id() );
+			}
 		
+			try {
+			System.out.println("Enter the movie ID you wish to return... ");
+			String return_id = sc.next();
+			if(returnMovie(rt, mov, return_id)) {
+				System.out.println("Movie returned successfully. ");
+			}
+			}catch (Exception e) {
+				System.out.println("An error occurred while returning the movie: " + e.getMessage());
+			}
+			try(FileWriter fwr3 = new FileWriter(fpr)){
+				gson.toJson(rt, fwr3);
+				System.out.println("Saved successfully. ");
+				}
+				catch (IOException e) {
+					System.out.println("Error writing file: " + e.getMessage());
+				}
+		break;
 		case 9:
 			System.out.println("EXITED");
 			f = false;
